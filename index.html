@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Diario de Clase Presencial - Colegio Montano</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --azul-principal: #1269A8;
+            --amarillo-brillante: #F7D615;
+            --verde-grisaceo: #54887D;
+            --azul-claro: #88B5C7;
+            --verde-oliva: #A6B046;
+            --blanco-suave: #F2F5E9;
+            --texto-oscuro: #1A2B3C;
+            --blanco-puro: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #CBD5E1;
+            padding: 15px;
+            color: var(--texto-oscuro);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Marco de Pizarra Digital */
+        .blackboard-frame {
+            width: 100%;
+            max-width: 1150px;
+            background-color: var(--blanco-suave);
+            border: 8px solid var(--amarillo-brillante);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Encabezado Institucional */
+        .blackboard-header {
+            background-color: var(--azul-principal);
+            color: var(--blanco-puro);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 5px solid var(--verde-grisaceo);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-logo {
+            height: 55px;
+            width: auto;
+            background-color: white;
+            padding: 4px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .header-titles h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--blanco-puro);
+        }
+
+        .header-titles p {
+            font-size: 0.85rem;
+            color: var(--amarillo-brillante);
+            font-weight: 600;
+        }
+
+        /* Botón Pantalla Completa */
+        .fullscreen-btn {
+            background-color: var(--amarillo-brillante);
+            color: var(--azul-principal);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .fullscreen-btn:hover {
+            transform: translateY(-2px);
+            background-color: #ffe02e;
+        }
+
+        /* Encabezado Técnico / Datos Informativos */
+        .header-info-grid {
+            background-color: #E2E8F0;
+            padding: 12px 25px;
+            font-size: 0.85rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            border-bottom: 2px solid var(--azul-claro);
+        }
+
+        .info-card {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--azul-principal);
+        }
+
+        .info-card strong {
+            color: var(--azul-principal);
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        /* Navegación por Pestañas (Momentos Didácticos) */
+        .tab-nav {
+            background-color: var(--verde-grisaceo);
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--blanco-suave);
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 4px solid transparent;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--blanco-puro);
+        }
+
+        .tab-btn.active {
+            background-color: var(--blanco-suave);
+            color: var(--azul-principal);
+            border-bottom: 4px solid var(--amarillo-brillante);
+            font-weight: 700;
+        }
+
+        /* Área de Contenido Principal */
+        .blackboard-content {
+            padding: 25px;
+            min-height: 460px;
+            max-height: 68vh;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Títulos e Indicadores de Tiempo */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--verde-oliva);
+        }
+
+        .section-title {
+            color: var(--azul-principal);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-time {
+            background-color: var(--amarillo-brillante);
+            color: var(--texto-oscuro);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* Tarjetas de Trabajo */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--azul-principal);
+        }
+
+        .card-habit {
+            border-left-color: var(--verde-oliva);
+            background-color: #F8FAF0;
+        }
+
+        .card h4 {
+            color: var(--azul-principal);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Botón desplegable / Acordeón para Soluciones Ocultas */
+        .accordion-btn {
+            background-color: var(--verde-grisaceo);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .accordion-btn:hover {
+            background-color: var(--azul-principal);
+        }
+
+        .accordion-content {
+            display: none;
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #F0F7FA;
+            border-left: 4px solid var(--azul-claro);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Juego Ruleta / Trivia */
+        .game-box {
+            background-color: #FAF5FF;
+            border: 2px dashed #8B5CF6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .roulette-display {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #6D28D9;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #DDD6FE;
+        }
+
+        .action-btn {
+            background-color: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            background-color: #7C3AED;
+        }
+
+        /* Tabla de Lista de Cotejo */
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+        }
+
+        .rubric-table th {
+            background-color: var(--azul-principal);
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .rubric-table td {
+            padding: 10px;
+            border-bottom: 1px solid #E2E8F0;
+            font-size: 0.85rem;
+        }
+
+        .rubric-table input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .blackboard-footer {
+            background-color: var(--azul-principal);
+            color: var(--blanco-puro);
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+            border-top: 3px solid var(--amarillo-brillante);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blackboard-frame" id="blackboard">
+        <!-- Encabezado Institucional Montano -->
+        <header class="blackboard-header">
+            <div class="brand-container">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" alt="Logo Colegio Montano" class="school-logo" onerror="this.src='https://placehold.co/120x50/1269A8/FFFFFF?text=Montano'">
+                <div class="header-titles">
+                    <h1>PLAN DIARIO DE CLASE PRESENCIAL • PIZARRA DIGITAL</h1>
+                    <p>Modelo Formativo Colegio Montano • Educación Primaria</p>
+                </div>
+            </div>
+            <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                <i class="fa-solid fa-expand"></i> Pantalla Completa
+            </button>
+        </header>
+
+        <!-- Datos del Encabezado Institucional -->
+        <div class="header-info-grid">
+            <div class="info-card">
+                <strong>Curso:</strong> Comunicación y Lenguaje
+            </div>
+            <div class="info-card">
+                <strong>Tema:</strong> Categorías Gramaticales I
+            </div>
+            <div class="info-card">
+                <strong>Grado / Unidad:</strong> 5to Primaria / Unidad II
+            </div>
+            <div class="info-card">
+                <strong>No. Plan y Fecha:</strong> Plan 7 / Quinta Semana Marzo
+            </div>
+            <div class="info-card">
+                <strong>Docente:</strong> Cecilia Mendoza
+            </div>
+        </div>
+
+        <!-- Navegación de Secuencia Didáctica (4 Momentos + Evaluación) -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab1')">
+                <i class="fa-solid fa-bolt"></i> I) Introducción Motivante (~5 min)
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab2')">
+                <i class="fa-solid fa-user"></i> II) Trabajo Individual (20 min)
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab3')">
+                <i class="fa-solid fa-users"></i> III) Trabajo Cooperativo (30 min)
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab4')">
+                <i class="fa-solid fa-comments"></i> IV) Plenaria / Trivia (15 min)
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab5')">
+                <i class="fa-solid fa-clipboard-check"></i> Evaluación Plenaria
+            </button>
+        </nav>
+
+        <!-- Área Principal de la Pizarra Digital -->
+        <main class="blackboard-content">
+
+            <!-- MOMENTO I: INTRODUCCIÓN MOTIVANTE -->
+            <section id="tab1" class="tab-content active">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Pestaña I) Introducción Motivante y Activación de Saberes</h2>
+                    <span class="badge-time">Tiempo: ~5 minutos</span>
+                </div>
+
+                <div class="card card-habit">
+                    <h4><i class="fa-solid fa-seedling"></i> Hábito Montano Integrado: "Comenzar con un fin en mente"</h4>
+                    <p><strong>Meta de la sesión:</strong> Comprender que el sustantivo nombra, el adjetivo describe y el pronombre reemplaza para construir oraciones claras y correctas.</p>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-bullseye"></i> Alineación CNB (Guatemala)</h4>
+                    <p><strong>Competencia:</strong> Aplica conocimientos morfosintácticos en la producción de textos orales y escritos.</p>
+                    <p><strong>Logro de Aprendizaje:</strong> Identifica sustantivos, adjetivos y pronombres manteniendo la concordancia gramatical.</p>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-gamepad"></i> Recreo Cerebral / Evaluación Inicial: "El Semáforo de Palabras"</h4>
+                    <p><strong>Dinámica rápida:</strong> El docente proyecta tres palabras en la pizarra y los alumnos levantan la tarjeta del color correspondiente (Azul = Sustantivo, Verde = Adjetivo, Amarillo = Pronombre):</p>
+                    <ul style="margin-left: 20px; margin-top: 6px;">
+                        <li><strong>Guatemala:</strong> ¿Qué es? (Sustantivo Propio - Tarjeta Azul)</li>
+                        <li><strong>Inteligentes:</strong> ¿Qué expresa? (Adjetivo Calificativo - Tarjeta Verde)</li>
+                        <li><strong>Nosotros:</strong> ¿Qué función cumple? (Pronombre Personal - Tarjeta Amarilla)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-box-open"></i> Recursos Necesarios</h4>
+                    <p>Cuaderno, Guía 7 de Comunicación y Lenguaje, tarjetas de color (Azul, Verde, Amarillo), marcadores.</p>
+                </div>
+            </section>
+
+            <!-- MOMENTO II: TRABAJO INDIVIDUAL -->
+            <section id="tab2" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-user"></i> Pestaña II) Trabajo Individual</h2>
+                    <span class="badge-time">Tiempo: 20 minutos</span>
+                </div>
+
+                <div class="card card-habit">
+                    <h4><i class="fa-solid fa-brain"></i> Hábito Montano Integrado: "Poner primero lo primero"</h4>
+                    <p>Enfoque autónomo del estudiante resolviendo sus guías de trabajo con responsabilidad y sin distracciones.</p>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-pen-to-square"></i> Actividad en Cuaderno</h4>
+                    <p>Lee la lección de la Guía 7 y desarrolla los siguientes 3 ejercicios de producción propia:</p>
+                    <ol style="margin-left: 20px; margin-top: 8px;">
+                        <li><strong>Sustantivos:</strong> Clasifica <em>volcán, Pacaya, jauría, paz</em> en propios/comunes y concretos/abstractos.</li>
+                        <li><strong>Adjetivos:</strong> Identifica el adjetivo y su grado en: <em>"Los alumnos aplicados obtuvieron la nota más alta."</em></li>
+                        <li><strong>Pronombres:</strong> Sustituye el sujeto por un pronombre en: <em>"Sofía y Mateo corren en el campo."</em></li>
+                    </ol>
+
+                    <!-- Botón desplegable para solución oculta -->
+                    <button class="accordion-btn" onclick="toggleAccordion('acc1')">
+                        <i class="fa-solid fa-key"></i> Desplegar Pistas y Solución Oculta
+                    </button>
+                    <div id="acc1" class="accordion-content">
+                        <strong>Orientación de Autoevaluación:</strong><br>
+                        1. volcán (común/concreto), Pacaya (propio/concreto), jauría (colectivo/concreto), paz (abstracto).<br>
+                        2. <em>aplicados</em> (calificativo), <em>más alta</em> (superlativo relativo).<br>
+                        3. <code>"Ellos corren en el campo."</code>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MOMENTO III: TRABAJO COOPERATIVO -->
+            <section id="tab3" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-users"></i> Pestaña III) Trabajo Cooperativo / en Equipo</h2>
+                    <span class="badge-time">Tiempo: 30 minutos</span>
+                </div>
+
+                <div class="card card-habit">
+                    <h4><i class="fa-solid fa-handshake"></i> Hábitos Montano Integrados: "Sinergizar" y "Pensar Ganar-Ganar"</h4>
+                    <p>Trabajo colaborativo estructurado donde el éxito de la tarea depende de la contribución equitativa de cada integrante.</p>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-sitemap"></i> Reto Grupal: "El Mural de Construcción Sintáctica"</h4>
+                    <p><strong>Organización de Equipos y Asignación de Roles:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Coordinador:</strong> Dirige la actividad y verifica concordancia de género y número.</li>
+                        <li><strong>Redactor:</strong> Escribe el texto en el papelógrafo según las reglas gramaticales.</li>
+                        <li><strong>Vocero:</strong> Fundamentará la solución del equipo durante la plenaria.</li>
+                    </ul>
+                    <br>
+                    <p><strong>Producto Concreto:</strong> Redactar un párrafo corto de 4 oraciones sobre la diversidad de Guatemala y subrayar con código de color: <strong>Azul</strong> (Sustantivos), <strong>Verde</strong> (Adjetivos) y <strong>Amarillo</strong> (Pronombres).</p>
+
+                    <button class="accordion-btn" onclick="toggleAccordion('acc2')">
+                        <i class="fa-solid fa-lightbulb"></i> Ver Modelo de Estructura Esperada
+                    </button>
+                    <div id="acc2" class="accordion-content">
+                        <strong>Ejemplo de Entrega:</strong><br>
+                        <em>"<strong>Nosotros</strong> (Pronombre) vivimos en una <u>nación</u> (Sustantivo) <em>hermosa</em> (Adjetivo). <strong>Ella</strong> (Pronombre) posee <u>bosques</u> (Sustantivo) <em>frondosos</em> (Adjetivo)."</em>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MOMENTO IV: PLENARIA Y TRIVIA -->
+            <section id="tab4" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-comments"></i> Pestaña IV) Plenaria y Juego Interactivo</h2>
+                    <span class="badge-time">Tiempo: 15 minutos</span>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-bullhorn"></i> Plenaria: Mini Exposición de Equipos</h4>
+                    <p>Cada vocero expone en 1 minuto la ruta de solución de su mural gramatical y responde una pregunta verificadora.</p>
+                </div>
+
+                <!-- Juego Interactivo Pasapalabra / Ruleta -->
+                <div class="game-box">
+                    <h4><i class="fa-solid fa-arrows-rotate"></i> Juego Interactivo: "Ruleta de Desafíos Gramaticales"</h4>
+                    <p>Haz clic en el botón para generar preguntas de comprobación durante la plenaria:</p>
+                    
+                    <div class="roulette-display" id="rouletteText">
+                        ¡Presiona "Girar Ruleta" para lanzar una pregunta!
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button class="action-btn" onclick="spinRoulette()">
+                            <i class="fa-solid fa-dice"></i> Girar Ruleta de Preguntas
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EVALUACIÓN PLENARIA: LISTA DE COTEJO -->
+            <section id="tab5" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-clipboard-check"></i> Instrumento de Evaluación Formativa para la Plenaria</h2>
+                </div>
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-list-check"></i> Lista de Cotejo Interactiva de Desempeño Grupal</h4>
+                    <p>Marque los criterios alcanzados por el equipo durante la exposición presencial en clase:</p>
+
+                    <table class="rubric-table">
+                        <thead>
+                            <tr>
+                                <th>Criterio a Evaluar</th>
+                                <th>Excelente (2.5 pts)</th>
+                                <th>En Proceso (1.5 pts)</th>
+                                <th>Por Mejorar (0.5 pts)</th>
+                                <th>Cumplido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. Identificación Gramatical:</strong> Clasifica correctamente sustantivos, adjetivos y pronombres.</td>
+                                <td>Clasifica sin errores las 3 categorías.</td>
+                                <td>Confunde adjetivo con pronombre.</td>
+                                <td>Dificultad alta para clasificar.</td>
+                                <td style="text-align: center;"><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. Concordancia Sintáctica:</strong> Aplica correctamente la concordancia de género y número.</td>
+                                <td>Sin errores de concordancia.</td>
+                                <td>1 error menor de concordancia.</td>
+                                <td>Múltiples errores de concordancia.</td>
+                                <td style="text-align: center;"><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. Trabajos y Hábitos:</strong> Demuestra sinergia y cumplimiento equitativo de roles.</td>
+                                <td>Cumplimiento proactivo de todos.</td>
+                                <td>Participación parcial del equipo.</td>
+                                <td>Solo un alumno trabajó.</td>
+                                <td style="text-align: center;"><input type="checkbox"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>4. Respuesta en Plenaria:</strong> El vocero responde con claridad las dudas planteadas.</td>
+                                <td>Respuesta precisa y fundamentada.</td>
+                                <td>Respuesta incompleta con dudas.</td>
+                                <td>No responde la pregunta.</td>
+                                <td style="text-align: center;"><input type="checkbox"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Pie de Pizarra Institucional -->
+        <footer class="blackboard-footer">
+            Modelo Formativo Colegio Montano • Planificación Diario de Clase Presencial • Proyección Digital en Aula
+        </footer>
+    </div>
+
+    <!-- Script de Funcionalidad e Interacción -->
+    <script>
+        // Cambio de pestañas / momentos didácticos
+        function switchTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+
+            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        // Acordeón / Ocultar soluciones
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el.style.display === "block") {
+                el.style.display = "none";
+            } else {
+                el.style.display = "block";
+            }
+        }
+
+        // Ruleta Interactiva
+        const preguntasRuleta = [
+            "¿Cuál es la función del Sustantivo en la oración?",
+            "¿En qué debe concordar el Adjetivo con el Sustantivo?",
+            "¿Qué diferencia existe entre un adjetivo y un pronombre demostrativo?",
+            "Menciona 2 ejemplos de sustantivos abstractos.",
+            "Transforma a voseo: 'Tú eres un estudiante aplicado'.",
+            "¿Cuál es el sustantivo colectivo de 'árbol' y de 'perro'?",
+            "Identifica el pronombre en: 'Ellos estudiaron juntos en la biblioteca'.",
+            "Menciona el Hábito Montano que aplicamos al trabajar en equipo."
+        ];
+
+        function spinRoulette() {
+            const display = document.getElementById('rouletteText');
+            display.style.color = "#6D28D9";
+            display.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Girando la ruleta...';
+            
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * preguntasRuleta.length);
+                display.innerText = preguntasRuleta[randomIndex];
+            }, 700);
+        }
+
+        // Pantalla Completa
+        function toggleFullscreen() {
+            const blackboard = document.getElementById('blackboard');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                if (blackboard.requestFullscreen) {
+                    blackboard.requestFullscreen();
+                } else if (blackboard.webkitRequestFullscreen) {
+                    blackboard.webkitRequestFullscreen();
+                } else if (blackboard.msRequestFullscreen) {
+                    blackboard.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
